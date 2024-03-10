@@ -223,7 +223,7 @@ class CloudStrm(_PluginBase):
                         # 回收站及隐藏的文件不处理
                         if (source_file.find("/@Recycle") != -1
                                 or source_file.find("/#recycle") != -1
-                                or source_file.find("/.") != -1
+                                or source_file.find("/.") and not source_file.find("/.actors") != -1
                                 or source_file.find("/@eaDir") != -1):
                             logger.info(f"{source_file} 是回收站或隐藏的文件，跳过处理")
                             continue
