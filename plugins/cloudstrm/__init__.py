@@ -18,21 +18,21 @@ from app.plugins import _PluginBase
 from app.core.config import settings
 
 
-class CloudStrm(_PluginBase):
+class CloudStrmMod(_PluginBase):
     # 插件名称
-    plugin_name = "云盘Strm生成"
+    plugin_name = "云盘Strm生成（含演员）"
     # 插件描述
     plugin_desc = "定时扫描云盘文件，生成Strm文件。"
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/create.png"
     # 插件版本
-    plugin_version = "3.6"
+    plugin_version = "3.6.1"
     # 插件作者
     plugin_author = "thsrite"
     # 作者主页
     author_url = "https://github.com/thsrite"
     # 插件配置项ID前缀
-    plugin_config_prefix = "cloudstrm_"
+    plugin_config_prefix = "cloudstrmmod_"
     # 加载顺序
     plugin_order = 26
     # 可使用的用户级别
