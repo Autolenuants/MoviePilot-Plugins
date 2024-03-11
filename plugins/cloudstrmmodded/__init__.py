@@ -18,7 +18,7 @@ from app.plugins import _PluginBase
 from app.core.config import settings
 
 
-class CloudStrmMod(_PluginBase):
+class CloudStrmModded(_PluginBase):
     # 插件名称
     plugin_name = "云盘Strm生成（含演员）"
     # 插件描述
