@@ -224,13 +224,13 @@ class CloudStrmModded(_PluginBase):
                         if (source_file.find("/@Recycle") != -1
                                 or source_file.find("/#recycle") != -1
                                 or source_file.find("/.")!= -1
-                                or source_file.find("/@eaDir") != -1
-                                and source_file.find("/.actor") == -1):
+                                and source_file.find("/.actors") == -1
+                                or source_file.find("/@eaDir") != -1):
                             logger.info(f"{source_file} 是回收站或隐藏的文件，跳过处理")
                             continue
-
+                        
                         # 不复制非媒体文件时直接过滤掉非媒体文件
-                        if not self._copy_files and not file.lower().endswith(self._video_formats):
+                        if not self._copy_files and not file.lower().endswith(self._video_formats) or file.lower().endswith("mka"):
                             continue
 
                         if source_file not in self.__cloud_files:
@@ -272,13 +272,13 @@ class CloudStrmModded(_PluginBase):
                     if (source_file.find("/@Recycle") != -1
                             or source_file.find("/#recycle") != -1
                             or source_file.find("/.") != -1
-                            and source_file.find("/.actor") == -1
+                            and source_file.find("/.actors") == -1
                             or source_file.find("/@eaDir") != -1):
                         logger.info(f"{source_file} 是回收站或隐藏的文件，跳过处理")
                         continue
 
                     # 不复制非媒体文件时直接过滤掉非媒体文件
-                    if not self._copy_files and not file.lower().endswith(self._video_formats):
+                    if not self._copy_files and not file.lower().endswith(self._video_formats) or file.lower().endswith("mka"):
                         continue
 
                     logger.info(f"扫描到新文件 {source_file}，正在开始处理")
