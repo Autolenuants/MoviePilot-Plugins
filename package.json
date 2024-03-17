@@ -7,7 +7,7 @@
         "author": "thsrite",
         "level": 1
       },
-      "CloudStrmModdav": {
+      "CloudStrm": {
         "name": "Webdav云盘Strm生成（含演员）",
         "description": "监控文件创建，生成Strm文件。",
         "version": "3.6.2",
