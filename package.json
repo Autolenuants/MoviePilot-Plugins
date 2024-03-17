@@ -7,6 +7,14 @@
         "author": "thsrite",
         "level": 1
       },
+      "CloudStrmModdav": {
+        "name": "Webdav云盘Strm生成（含演员）",
+        "description": "监控文件创建，生成Strm文件。",
+        "version": "3.6.2",
+        "icon": "https://raw.githubusercontent.com/thsrite/MoviePilot-Plugins/main/icons/create.png",
+        "author": "thsrite",
+        "level": 1
+      },
       "LinkMonitorModded": {
         "name": "实时硬链接（含演员)",
         "description": "监控目录文件变化，实时硬链接。",
