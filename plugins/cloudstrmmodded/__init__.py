@@ -26,7 +26,7 @@ class CloudStrmModded(_PluginBase):
     # 插件图标
     plugin_icon = "https://raw.githubusercontent.com/Autolenuants/MoviePilot-Plugins/main/icons/create.png"
     # 插件版本
-    plugin_version = "3.6.1"
+    plugin_version = "3.7.1"
     # 插件作者
     plugin_author = "thsrite"
     # 作者主页
@@ -46,8 +46,8 @@ class CloudStrmModded(_PluginBase):
     _onlyonce = False
     _copy_files = False
     _rebuild = False
+    _https = False
     _observer = []
-    _video_formats = ('.mp4', '.avi', '.rmvb', '.wmv', '.mov', '.mkv', '.flv', '.ts', '.webm', '.iso', '.mpg', '.m2ts')
     __cloud_files_json = "cloud_files.json"
 
     _dirconf = {}
@@ -75,6 +75,7 @@ class CloudStrmModded(_PluginBase):
             self._rebuild_cron = config.get("rebuild_cron")
             self._onlyonce = config.get("onlyonce")
             self._rebuild = config.get("rebuild")
+            self._https = config.get("https")
             self._copy_files = config.get("copy_files")
             self._monitor_confs = config.get("monitor_confs")
 
@@ -92,6 +93,9 @@ class CloudStrmModded(_PluginBase):
             for monitor_conf in monitor_confs:
                 # 格式 源目录:目的目录:媒体库内网盘路径:监控模式
                 if not monitor_conf:
+                    continue
+                # 注释
+                if str(monitor_conf).startswith("#"):
                     continue
                 if str(monitor_conf).count("#") == 2:
                     source_dir = str(monitor_conf).split("#")[0]
@@ -223,14 +227,13 @@ class CloudStrmModded(_PluginBase):
                         # 回收站及隐藏的文件不处理
                         if (source_file.find("/@Recycle") != -1
                                 or source_file.find("/#recycle") != -1
-                                or source_file.find("/.")!= -1
-                                and source_file.find("/.actors") == -1
+                                or source_file.find("/.") != -1
                                 or source_file.find("/@eaDir") != -1):
                             logger.info(f"{source_file} 是回收站或隐藏的文件，跳过处理")
                             continue
-                        
+
                         # 不复制非媒体文件时直接过滤掉非媒体文件
-                        if not self._copy_files and not file.lower().endswith(self._video_formats) or file.lower().endswith("mka"):
+                        if not self._copy_files and Path(file).suffix not in settings.RMT_MEDIAEXT:
                             continue
 
                         if source_file not in self.__cloud_files:
@@ -271,14 +274,14 @@ class CloudStrmModded(_PluginBase):
                     # 回收站及隐藏的文件不处理
                     if (source_file.find("/@Recycle") != -1
                             or source_file.find("/#recycle") != -1
-                            or source_file.find("/.") != -1
+                            or source_file.find("/.")!= -1
                             and source_file.find("/.actors") == -1
                             or source_file.find("/@eaDir") != -1):
                         logger.info(f"{source_file} 是回收站或隐藏的文件，跳过处理")
                         continue
 
                     # 不复制非媒体文件时直接过滤掉非媒体文件
-                    if not self._copy_files and not file.lower().endswith(self._video_formats) or file.lower().endswith("mka"):
+                    if not self._copy_files and Path(file).suffix not in settings.RMT_MEDIAEXT:
                         continue
 
                     logger.info(f"扫描到新文件 {source_file}，正在开始处理")
@@ -341,9 +344,10 @@ class CloudStrmModded(_PluginBase):
                             os.makedirs(Path(dest_file).parent)
 
                         # 视频文件创建.strm文件
-                        if dest_file.lower().endswith(self._video_formats):
+                        if Path(dest_file).suffix in settings.RMT_MEDIAEXT:
                             # 创建.strm文件
-                            self.__create_strm_file(dest_file=dest_file,
+                            self.__create_strm_file(scheme="https" if self._https else "http",
+                                                    dest_file=dest_file,
                                                     dest_dir=dest_dir,
                                                     source_file=source_file,
                                                     library_dir=library_dir,
@@ -361,7 +365,8 @@ class CloudStrmModded(_PluginBase):
 
     @staticmethod
     def __create_strm_file(dest_file: str, dest_dir: str, source_file: str, library_dir: str = None,
-                           cloud_type: str = None, cloud_path: str = None, cloud_url: str = None):
+                           cloud_type: str = None, cloud_path: str = None, cloud_url: str = None,
+                           scheme: str = None):
         """
         生成strm文件
         :param library_dir:
@@ -396,10 +401,10 @@ class CloudStrmModded(_PluginBase):
                 dest_file = urllib.parse.quote(dest_file, safe='')
                 if str(cloud_type) == "cd2":
                     # 将路径的开头盘符"/mnt/user/downloads"替换为"http://localhost:19798/static/http/localhost:19798/False/"
-                    dest_file = f"http://{cloud_url}/static/http/{cloud_url}/False/{dest_file}"
+                    dest_file = f"{scheme}://{cloud_url}/static/{scheme}/{cloud_url}/False/{dest_file}"
                     logger.info(f"替换后cd2路径:::{dest_file}")
                 elif str(cloud_type) == "alist":
-                    dest_file = f"http://{cloud_url}/d/{dest_file}"
+                    dest_file = f"{scheme}://{cloud_url}/d/{dest_file}"
                     logger.info(f"替换后alist路径:::{dest_file}")
                 else:
                     logger.error(f"云盘类型 {cloud_type} 错误")
@@ -427,6 +432,7 @@ class CloudStrmModded(_PluginBase):
             "onlyonce": self._onlyonce,
             "rebuild": self._rebuild,
             "copy_files": self._copy_files,
+            "https": self._https,
             "cron": self._cron,
             "monitor_confs": self._monitor_confs
         })
@@ -603,7 +609,7 @@ class CloudStrmModded(_PluginBase):
                                 'component': 'VCol',
                                 'props': {
                                     'cols': 12,
-                                    'md': 6
+                                    'md': 4
                                 },
                                 'content': [
                                     {
@@ -611,6 +617,22 @@ class CloudStrmModded(_PluginBase):
                                         'props': {
                                             'model': 'copy_files',
                                             'label': '复制非媒体文件',
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                'component': 'VCol',
+                                'props': {
+                                    'cols': 12,
+                                    'md': 4
+                                },
+                                'content': [
+                                    {
+                                        'component': 'VSwitch',
+                                        'props': {
+                                            'model': 'https',
+                                            'label': '启用https',
                                         }
                                     }
                                 ]
@@ -715,6 +737,7 @@ class CloudStrmModded(_PluginBase):
             "onlyonce": False,
             "rebuild": False,
             "copy_files": False,
+            "https": False,
             "monitor_confs": ""
         }
 
@@ -729,6 +752,10 @@ class CloudStrmModded(_PluginBase):
             if self._scheduler:
                 self._scheduler.remove_all_jobs()
                 if self._scheduler.running:
+                    self._scheduler.shutdown()
+                self._scheduler = None
+        except Exception as e:
+            logger.error("退出插件失败：%s" % str(e))
                     self._scheduler.shutdown()
                 self._scheduler = None
         except Exception as e:
