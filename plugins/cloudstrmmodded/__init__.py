@@ -28,13 +28,13 @@ class CloudStrmModded(_PluginBase):
     # 插件版本
     plugin_version = "3.7.1"
     # 插件作者
-    plugin_author = "thsrite"
+    plugin_author = "thsrite & Autolenuants"
     # 作者主页
     author_url = "https://github.com/thsrite"
     # 插件配置项ID前缀
     plugin_config_prefix = "cloudstrmmod_"
     # 加载顺序
-    plugin_order = 26
+    plugin_order = 1026
     # 可使用的用户级别
     auth_level = 1
 
