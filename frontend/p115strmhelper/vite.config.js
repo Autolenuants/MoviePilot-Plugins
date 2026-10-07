@@ -38,6 +38,10 @@ export default defineConfig({
     minify: 'terser',      // 开发阶段建议关闭混淆
     cssCodeSplit: true, // 改为true以便能分离样式文件
     chunkSizeWarningLimit: 1000, // 提高警告阈值到 1000KB
+    // 构建产物直接输出到插件目录，MoviePilot 通过
+    // /api/v1/plugin/file/p115strmhelper/dist/assets/remoteEntry.js 加载联邦组件
+    outDir: '../../plugins.v2/p115strmhelper/dist',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
         // 手动分割代码块，将大型依赖库分离
